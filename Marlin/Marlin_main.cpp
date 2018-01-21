@@ -2351,7 +2351,8 @@ static float run_z_probe(const bool short_move = true) {
 #endif
 
   // move up to make clearance for the probe
-  do_blocking_move_to_z(current_position[Z_AXIS] + Z_CLEARANCE_BETWEEN_PROBES, MMM_TO_MMS(Z_PROBE_SPEED_FAST));
+  do_blocking_move_to_z(current_position[Z_AXIS] + Z_CLEARANCE_BETWEEN_PROBES, MMM_TO_MMS(Z_PROBE_SPEED_FAST));  
+  
 
 #else
 
@@ -2383,7 +2384,8 @@ static float run_z_probe(const bool short_move = true) {
   }
 #endif
 
-  return RAW_CURRENT_POSITION(Z) + zprobe_zoffset
+  //return RAW_CURRENT_POSITION(Z) + zprobe_zoffset
+  return current_position[Z_AXIS]
 #if ENABLED(DELTA)
          + home_offset[Z_AXIS] // Account for delta height adjustment
 #endif
@@ -2440,10 +2442,10 @@ float probe_pt(const float &lx, const float &ly, const bool stow, const uint8_t 
   if (!DEPLOY_PROBE()) {
     measured_z = run_z_probe(printable);
 
-    if (!stow)
-      do_blocking_move_to_z(current_position[Z_AXIS] + Z_CLEARANCE_BETWEEN_PROBES, MMM_TO_MMS(Z_PROBE_SPEED_FAST));
-    else if (STOW_PROBE()) measured_z = NAN;
-
+/*     if (!stow)
+		do_blocking_move_to_z(current_position[Z_AXIS] + Z_CLEARANCE_BETWEEN_PROBES, MMM_TO_MMS(Z_PROBE_SPEED_FAST));
+    else if (STOW_PROBE()) measured_z = NAN; */
+//PN CHANGED
   }
 
 #if HAS_SOFTWARE_ENDSTOPS
@@ -5379,7 +5381,7 @@ inline void gcode_G30() {
     //SERIAL_PROTOCOLPAIR("Bed X: ", FIXFLOAT(xpos));
     //SERIAL_PROTOCOLPAIR(" Y: ", FIXFLOAT(ypos));
     //SERIAL_PROTOCOLLNPAIR(" Z: ", FIXFLOAT(measured_z));
-    SERIAL_PROTOCOLPGM("echo:endstops hit: Z:");
+    SERIAL_PROTOCOLPGM("echo: endstops hit Z:");
     SERIAL_PROTOCOLLN(measured_z + 0.0001);
     #else
       SERIAL_PROTOCOLPAIR("Bed X: ", FIXFLOAT(xpos));
